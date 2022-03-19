@@ -1,0 +1,64 @@
+<EditForm Model="@table" OnValidSubmit="@ValidSubmit">
+
+    <DataAnnotationsValidator />
+
+
+    <div class="row d-flex justify-content-center">
+        <div class="col-md-7">
+            <span style="font-size: 18px;">Editar Tabela</span>
+            <hr class="mt-1 mb-2">
+
+            <div class="form-group mb-3">
+                <strong>Nome</strong>
+                <InputText class="form-control mt-2" @bind-Value="@table.Name" />
+
+                <div class="text-danger">
+                    <ValidationMessage For="() => table.Name" />
+                </div>
+
+            </div>
+
+
+            <hr class="mt-1 mb-2">
+
+            <div class="form-group mb-3">
+                <strong>&nbsp;</strong>
+                <button class="btn btn-success float-right" type="submit">
+                    Salvar
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+</EditForm>
+
+
+
+@page "/Projeto/Table/Edit/{ProjetoGuid}/{TableGuid}"
+@inject iProjetoService ProjetoService
+@inject NavigationManager nav
+@code {
+
+    [Parameter]
+    public string ProjetoGuid { get; set; }
+
+    [Parameter]
+    public string TableGuid { get; set; }
+
+    public Entities.Table table { get; set; } = new();
+
+
+    protected async override Task OnInitializedAsync()
+    {
+        table = await ProjetoService.GetTable(ProjetoGuid, TableGuid);
+        StateHasChanged();
+    }
+
+
+    public async void ValidSubmit()
+    {
+        await ProjetoService.UpdateTable(ProjetoGuid, TableGuid, table);
+        nav.NavigateTo($"/projeto/{ProjetoGuid}/{TableGuid}/mysql");
+    }
+}

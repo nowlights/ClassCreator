@@ -1,7 +1,3 @@
-@page "/projeto/{ProjetoGuid}"
-@inject iProjetoService ProjetoService
-
-
 @if (projeto != null)
 {
     <div class="row mb-3">
@@ -34,6 +30,34 @@
                 </div>
             </div>
         </div>
+
+        <div class="col-sm-auto">
+            <div class="card card-sm" title="Linguagem">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <span class="bg-green text-white avatar avatar-sm">
+                                <!-- Download SVG icon from http://tabler-icons.io/i/shopping-cart -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-database"
+                                width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                    <ellipse cx="12" cy="6" rx="8" ry="3"></ellipse>
+                                    <path d="M4 6v6a8 3 0 0 0 16 0v-6"></path>
+                                    <path d="M4 12v6a8 3 0 0 0 16 0v-6"></path>
+                                </svg>
+                            </span>
+                        </div>
+                        <div class="col">
+                            <div class="font-weight-medium">
+                                @projeto.NameDataBase
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="col-md-1" style="min-width: 150px;">
             <div class="card card-sm" title="Linguagem">
                 <div class="card-body">
@@ -92,6 +116,16 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-auto">
+            <div class="card card-sm" title="Editar Projeto">
+                <div class="card-body">
+                    <button class="btn btn-outline-warning" style="height: 32px;"
+                    @onclick='() => nav.NavigateTo("/Projeto/Edit/" + ProjetoGuid)'>
+                        Editar Projeto
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
 
@@ -102,21 +136,26 @@
 
 
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-2">
             <div class="card mb-3">
                 <div class="card-header">
                     <h3 class="card-title">Tabelas</h3>
                 </div>
                 <div class="list-group list-group-flush list-group-hoverable">
 
+
+
+
                     @if (projeto.Tables != null)
                     {
-                        @foreach (var tables in projeto.Tables)
+
+                        @foreach (var table in projeto.Tables)
                         {
-                            <div class="list-group-item btn btn-outline-primary" style="border-radius: 0px;">
+                            <div class="list-group-item btn btn-outline-primary @(TableGuidClicked == table.Guid ? "active" : "")"
+                    @onclick='() => OpenTable(table.Guid)' style="border-radius: 0px;">
                                 <div class="row align-items-center">
                                     <div class="col text-white">
-                                        @tables.Name
+                                        @table.Name
                                     </div>
                                 </div>
                             </div>
@@ -141,7 +180,7 @@
                 <div class="card-footer border-top">
                     <div class="row">
                         <div class="col-md">
-                            <input class="form-control" @bind="@NewTableName">
+                            <input class="form-control" @bind="@NewTableName" placeholder="Nome Tablea">
                         </div>
                         <div class="col-md-auto">
                             <button class="btn btn-outline-success" @onclick="@AddNewTable">
@@ -152,6 +191,212 @@
                 </div>
             </div>
         </div>
+
+
+
+
+        <div class="col-md">
+
+
+            @if (TableGuidClicked != null)
+            {
+                var table = projeto.Tables.Where(x => x.Guid == TableGuidClicked).FirstOrDefault();
+
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between">
+                        <div>
+                            @* <span class="badge bg-blue-lt p-3" style="font-size: 18px;">
+                                [@table.Guid] - @table.Name
+                                </span> *@
+
+                            <button class="btn btn-outline-info mt-0" style="height: 34px;">
+                                [@table.Guid] - @table.Name
+                            </button>
+
+                            <button class="btn btn-outline-warning ml-3 mt-0" style="height: 34px;"
+                        @onclick='() => nav.NavigateTo($"/Projeto/Table/Edit/{ProjetoGuid}/{TableGuidClicked}")'>
+                                Editar Tabela
+                            </button>
+                        </div>
+
+                        <button class="btn btn-outline-danger" @onclick="@DeleteTable">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash-x" width="24"
+                        height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                        stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <path d="M4 7h16"></path>
+                                <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                                <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                                <path d="M10 12l4 4m0 -4l-4 4"></path>
+                            </svg>
+                            Excluir Tabela
+                        </button>
+                    </div>
+                    <div class="card-body">
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="d-flex flex-column">
+                                    <strong>Propriedades</strong>
+                                    <span class="text-obs">Você pode escrever [tipo] - [nome], ex.: int - Id ou string -
+                                        Nome</span>
+                                    <span class="text-obs">Duplo click na propriedade para editar</span>
+                                </div>
+
+
+
+                                <hr class="my-3">
+
+
+                                @foreach (var i in projeto.Tables.Where(x => x.Guid ==
+                               TableGuidClicked).FirstOrDefault().Entities ?? new List<Props>())
+                                {
+                                    <div class="row mb-3">
+                                        <div class="col-sm-3">
+                                            <span class="badge bg-blue-lt w-100 h-100">@i.Type</span>
+                                        </div>
+
+                                        <div class="col-sm-auto">
+                                            @if (i.NotNull)
+                                            {
+                                                <label class="form-check mt-2" title="NotNull">
+                                                    <input class="form-check-input" type="checkbox" checked
+                                        @onclick="() => SetNotNullProperty(i.Guid)">
+                                                    <span class="form-check-label">NN</span>
+                                                </label>
+                                            }
+                                            else
+                                            {
+                                                <label class="form-check mt-2" title="NotNull">
+                                                    <input class="form-check-input" type="checkbox"
+                                        @onclick="() => SetNotNullProperty(i.Guid)">
+                                                    <span class="form-check-label">NN</span>
+                                                </label>
+                                            }
+
+                                        </div>
+                                        <div class="col-sm d-flex flex-row justify-content-between">
+                                            <span class="badge bg-blue w-100 h-100"> @i.Name</span>
+
+                                            <button class="btn btn-outline-danger btn-sm ml-3"
+                                    @onclick="() => RemoveProperty(i.Guid)">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash-x"
+                                        width="10" height="10" viewBox="0 0 24 24" stroke-width="2"
+                                        stroke="currentColor" fill="none" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                    <path d="M4 7h16"></path>
+                                                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                                                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                                                    <path d="M10 12l4 4m0 -4l-4 4"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                }
+
+
+                                <EditForm class="row mt-3" model="@this" OnValidSubmit="@AddProperty">
+                                    <DataAnnotationsValidator />
+                                    <div class="col-sm-3">
+                                        <select class="form-control" @bind="@Tipo">
+                                            @foreach (var i in Mapping.CSharpTypes.Types)
+                                            {
+                                                <option value="@i">@i</option>
+                                            }
+
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <input class="form-control" @bind="@Nome" placeholder="Nome">
+                                        <ValidationMessage For="() => Nome" />
+                                    </div>
+                                    <input type="submit" hidden />
+                                </EditForm>
+
+                                <span class="text-obs">A primeira propriedade, se conter Id será atribuido o AUTO_INCREMENT e
+                                    PRIMARY_KEY</span>
+
+
+                            </div>
+
+                            <div class="col-md-1" style="border-left: 1px solid rgba(101, 109, 119, 0.16); max-width: 1px;">
+                            </div>
+
+                            <div class="col-md">
+
+
+                                <div class="d-flex flex-row mb-2">
+                                    @foreach (var i in Mapping.MappingCall.LanguagesTypes.Langs())
+                                    {
+                                        <button class="btn btn-@(LANG == i.Lang.ToLower() ? "" : "outline-")success ml-2 active"
+                                @onclick='() => SetLANG(i.Lang)'>@i.Lang.Replace("_", ".")</button>
+                                    }
+                                </div>
+
+
+                                <div class="d-flex flex-row">
+                                    @foreach (var i in Mapping.MappingCall.LanguagesTypes.Langs().Where(x => x.Lang.ToLower() ==
+                                   LANG.ToLower()).FirstOrDefault().Statament)
+                                    {
+                                        <button class="btn btn-@(CRUD == i ? "" : "outline-")azure ml-2"
+                                @onclick='() => SetCRUD(i)'>@i.ToUpper().Replace("_", " ")</button>
+                                    }
+                                </div>
+
+
+
+
+
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Code</h3>
+                                    </div>
+                                    <div class="card-code">
+                                        <figure class="highlight">
+                                            <pre>
+                                                                                        <code class="language-scss" data-lang="scss">
+                                                    @GeneratedCode
+                                                                                        </code>
+                                                                                    </pre>
+                                        </figure>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="card">
+                    <div class="card-body d-flex justify-content-center py-4">
+                        <strong>Nenhuma tabela selecionada.</strong>
+                    </div>
+                </div>
+            }
+
+
+            <div class="mt-3">
+                <button class="float-right btn btn-outline-danger" @onclick="@DeleteProject">Deletar Projeto</button>
+            </div>
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+
     </div>
 
 
@@ -159,26 +404,52 @@
 }
 
 
+@page "/projeto/{ProjetoGuid}/{TableGuidClicked?}/{LANG?}/{CRUD?}"
+@using System.ComponentModel.DataAnnotations
+@inject iProjetoService ProjetoService
+@inject NavigationManager nav;
+
 
 @code {
 
     [Parameter]
     public string ProjetoGuid { get; set; }
 
+    [Parameter]
+    public string TableGuidClicked { get; set; }
+
+    [Parameter]
+    public string CRUD { get; set; }
+
+    [Parameter]
+    public string LANG { get; set; }
+
 
     public Projeto projeto { get; set; }
 
 
+
     public string NewTableName { get; set; }
+
+
+    public string GeneratedCode { get; set; }
+
+
+    /// add properti
+    public string Tipo { get; set; }
+
+    [RegularExpression(@"^[a-zA-Z0-9-_]*$", ErrorMessage = "Somente letras e numeros são permitidos")]
+    public string Nome { get; set; }
+
 
     protected async override Task OnInitializedAsync()
     {
-       await GetProjeto();
+        await GetProjeto();
     }
 
     public async Task GetProjeto()
     {
-        projeto = await ProjetoService.Get(ProjetoGuid);
+        projeto = await ProjetoService.GetProjeto(ProjetoGuid);
     }
 
 
@@ -192,4 +463,92 @@
             StateHasChanged();
         }
     }
+
+    public void OpenTable(string Guid)
+    {
+        nav.NavigateTo($"/projeto/{ProjetoGuid}/{Guid}/mysql");
+    }
+
+
+    public void SetLANG(string _LANG)
+    {
+        LANG = _LANG.ToLower();
+        nav.NavigateTo($"/projeto/{ProjetoGuid}/{TableGuidClicked}/{LANG}");
+    }
+    public void SetCRUD(string _CRUD)
+    {
+        CRUD = _CRUD;
+        nav.NavigateTo($"/projeto/{ProjetoGuid}/{TableGuidClicked}/{LANG}/{CRUD}");
+        GenerateCode();
+    }
+
+    public async void DeleteProject()
+    {
+        await ProjetoService.DeleteProjeto(ProjetoGuid);
+        nav.NavigateTo("/", true);
+    }
+
+
+
+    #region TABLE FUNCTIONS
+
+    public async void AddProperty()
+    {
+        if (Nome.Contains("-"))
+        {
+            string[] splitType = Nome.Replace(" ", "").Split('-');
+            // 0 = type
+            // 1 = name
+            await ProjetoService.AddProps(ProjetoGuid, TableGuidClicked, splitType[0], splitType[1]);
+        }
+        else await ProjetoService.AddProps(ProjetoGuid, TableGuidClicked, Tipo, Nome);
+
+        Nome = "";
+        Tipo = "int";
+        await GetProjeto();
+        StateHasChanged();
+    }
+
+    public async void RemoveProperty(string PropertyGuid)
+    {
+        await ProjetoService.RemoveProps(ProjetoGuid, TableGuidClicked, PropertyGuid);
+
+        await GetProjeto();
+        StateHasChanged();
+    }
+
+
+    public async void DeleteTable()
+    {
+        await ProjetoService.DeleteTable(ProjetoGuid, TableGuidClicked);
+        await GetProjeto();
+        nav.NavigateTo($"/projeto/{ProjetoGuid}");
+    }
+
+    public async void SetNotNullProperty(string PropsGuid)
+    {
+        await ProjetoService.SetNotNullProps(ProjetoGuid, TableGuidClicked, PropsGuid);
+        await GetProjeto();
+    }
+
+
+    public void GenerateCode()
+    {
+        GeneratedCode = Mapping.MappingCall.Mapper(
+        LANG,
+        CRUD,
+        projeto.NameDataBase,
+        projeto.UsingStyleConnection,
+        projeto.Tables.Where(x => x.Guid == TableGuidClicked).FirstOrDefault().Name,
+        projeto.Tables.Where(x => x.Guid == TableGuidClicked).FirstOrDefault().Entities);
+        StateHasChanged();
+    }
+
+
+    #endregion
+
+
+
+
+
 }

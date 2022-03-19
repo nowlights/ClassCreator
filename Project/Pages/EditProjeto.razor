@@ -1,10 +1,3 @@
-@page "/novoprojeto"
-@inject iProjetoService ProjetoService
-@inject NavigationManager NavManager
-
-
-
-
 <EditForm Model="@projeto" OnValidSubmit="@ValidSubmit">
 
     <DataAnnotationsValidator />
@@ -12,7 +5,7 @@
 
     <div class="row d-flex justify-content-center">
         <div class="col-md-7">
-            <span style="font-size: 18px;">Criar novo Projeto</span>
+            <span style="font-size: 18px;">Editar Projeto</span>
             <hr class="mt-1 mb-2">
 
             <div class="form-group mb-3">
@@ -44,7 +37,7 @@
                     <ValidationMessage For="() => projeto.UsingStyleConnection" />
                 </div>
 
-                <div class="card">
+                 <div class="card">
                     <div class="card-code">
                         <figure class="highlight">
                             <pre><code class="language-scss" data-lang="scss">{ <br/> ... <br/>}</code></pre>
@@ -76,7 +69,7 @@
             <div class="form-group mb-3">
                 <strong>&nbsp;</strong>
                 <button class="btn btn-success float-right" type="submit">
-                    Cadastrar
+                    Salvar
                 </button>
             </div>
         </div>
@@ -85,25 +78,27 @@
 
 </EditForm>
 
-
-
-
-
+@page "/Projeto/Edit/{ProjetoGuid}"
+@inject iProjetoService ProjetoService
+@inject NavigationManager nav
 @code {
+
+    [Parameter]
+    public string ProjetoGuid { get; set; }
 
     private Projeto projeto = new();
 
-    protected override void OnInitialized()
+    protected async override Task OnInitializedAsync()
     {
-        projeto.UsingStyleConnection = "using(MySqlConnection cn = new MySqlConnection(ConnectionString))";
+        projeto = await ProjetoService.GetProjeto(ProjetoGuid);
+        StateHasChanged();
     }
+
 
     private async void ValidSubmit()
     {
         projeto.Date = DateTime.Now;
-        await ProjetoService.SaveProjeto(projeto);
-        NavManager.NavigateTo("/", true);
+        await ProjetoService.UpdateProjeto(ProjetoGuid, projeto);
+        nav.NavigateTo($"/projeto/{ProjetoGuid}/", true);
     }
-
-
 }

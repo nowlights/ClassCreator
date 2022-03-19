@@ -85,6 +85,9 @@ namespace Project
             {
                 Electron.App.Quit();
             };
+
+            
+            
         }
     }
 }

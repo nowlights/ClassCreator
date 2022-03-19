@@ -357,3 +357,9 @@ html, body {
   .mx-auto {
     margin-left: auto !important;
   }
+
+
+  .text-obs{
+      font-size: 12px;
+      color: rgba(255,255,255,0.6);
+  }

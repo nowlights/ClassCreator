@@ -12146,7 +12146,7 @@ pre {
        tab-size: 3;
   border-radius: 4px;
   white-space: pre-wrap;
-  background: #fafbfd;
+  /* background: #fafbfd; */
   border: 1px solid rgba(101, 109, 119, 0.16);
   -webkit-font-smoothing: auto; }
   pre code {

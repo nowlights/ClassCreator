@@ -97,7 +97,7 @@
         </div>
 
         <div class="col-md-auto">
-            <div class="card card-sm" title="Data Criado">
+            <div class="card card-sm" title="Abrir">
                 <div class="card-body">
                     <button class="btn btn-outline-success" onclick="window.location.href='/projeto/@i.Guid'" style="height: 32px;">
                         Abrir Projeto
@@ -119,7 +119,7 @@
     private List<Projeto> Projetos = new();
     protected override async Task OnInitializedAsync()
     {
-        Projetos = await ProjetoService.GetList();
+        Projetos = await ProjetoService.GetListProjeto();
 
     }
 }
