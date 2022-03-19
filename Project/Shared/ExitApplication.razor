@@ -1,0 +1,33 @@
+@using ElectronNET.API
+<button class="btn btn-outline-warning" @onclick="@Minimize">
+    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-minus" width="24" height="24"
+        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+        stroke-linejoin="round">
+        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+    </svg>
+</button>
+
+<button class="btn btn-outline-danger mr-0" @onclick="@Exit">
+    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24"
+        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+        stroke-linejoin="round">
+        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+    </svg>
+</button>
+
+@code {
+    public void Exit()
+    {
+        var mainWindow = Electron.WindowManager.BrowserWindows.First();
+        mainWindow.Close();
+    }
+
+    public void Minimize()
+    {
+        var mainWindow = Electron.WindowManager.BrowserWindows.First();
+        mainWindow.Minimize();
+    }
+}

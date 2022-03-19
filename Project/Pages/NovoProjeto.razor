@@ -1,0 +1,74 @@
+@page "/novoprojeto"
+@inject iProjetoService ProjetoService
+@inject NavigationManager NavManager
+
+
+
+
+<EditForm Model="@projeto" OnValidSubmit="@ValidSubmit">
+
+    <DataAnnotationsValidator />
+
+
+    <div class="row d-flex justify-content-center">
+        <div class="col-md-7">
+            <span style="font-size: 18px;">Criar novo Projeto</span>
+            <hr class="mt-1 mb-2">
+
+            <div class="form-group mb-3">
+                <strong>Nome</strong>
+                <InputText class="form-control mt-2" @bind-Value="@projeto.Name" />
+
+                <div class="text-danger">
+                    <ValidationMessage For="() => projeto.Name" />
+                </div>
+
+            </div>
+            <div class="form-group d-flex flex-column mb-3">
+                <strong>Linguagem</strong>
+                <div class="form-selectgroup mt-2">
+                    @foreach (var i in System.Enum.GetNames(typeof(Entities.Projeto.language)))
+                    {
+                        <label class="form-selectgroup-item">
+                            <input type="radio" name="language" value="@i" class="form-selectgroup-input"
+                            @oninput="@(ui => { projeto.Language = (string)ui.Value;})">
+                            <span class="form-selectgroup-label">
+                                @i.Replace("_", ".")
+                            </span>
+                        </label>
+                    }
+                </div>
+                <ValidationMessage For="() => projeto.Language" />
+            </div>
+
+            <hr class="mt-1 mb-2">
+
+            <div class="form-group mb-3">
+                <strong>&nbsp;</strong>
+                <button class="btn btn-success float-right" type="submit">
+                    Cadastrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+</EditForm>
+
+
+
+
+
+@code {
+
+    private Projeto projeto = new();
+
+    private async void ValidSubmit()
+    {
+        projeto.Date = DateTime.Now;
+        await ProjetoService.Save(projeto);
+        NavManager.NavigateTo("/");
+    }
+
+
+}

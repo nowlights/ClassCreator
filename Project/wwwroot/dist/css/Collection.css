@@ -1,0 +1,44 @@
+/* COLORS */
+.bg-Azul{
+    background-color: #1572e8 !important;
+}
+
+.bg-Cinza{
+    background-color: #6c757d !important;
+}
+
+.bg-Verde{
+    background-color: #31ce36 !important;
+}
+
+.bg-AzulClaro{
+    background-color: #17a2b8 !important;
+}
+
+.bg-Laranja{
+    background-color: #ffad46 !important;
+}
+
+.bg-Vermelho{
+    background-color: #f25961 !important;
+}
+
+.bg-Preto{
+    background-color: #343a40 !important;
+}
+
+.bg-Rosa{
+    background-color: pink !important;
+}
+
+.bg-Amarelo{
+    background-color: rgb(217,217,0) !important;
+}
+
+.bg-Roxo {
+    background-color: #6861ce !important;
+}
+
+.text-small{
+    font-size: 12px;
+}
