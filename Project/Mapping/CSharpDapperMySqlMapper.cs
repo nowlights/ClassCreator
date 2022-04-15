@@ -1,9 +1,45 @@
 using System.Collections.Generic;
+using Project.Extension;
 
 namespace Project.Mapping
 {
     public class CSharpDapperMySqlMapper
     {
+        public static class Create_Async
+        {
+            public static string Build(string NomeDataBase, string UsingStyleConnection, string NameTable, List<Entities.Props> Props)
+            {
+                string code = $"public async Task<int> Create({NameTable} x)";
+                code += "\r\n{";
+                code += "\r\n\tTry";
+                code += "\r\n\t{";
+                code += $"\r\n\t\tvar sql = $\"INSERT INTO {NameTable} (";
+                for (int i = 0; i < Props.Count; i++)
+                {
+                    if (i == 0 && Props[i].Name.ToLower().Contains("id")) { }
+                    else
+                        code += Props[i].Name + ",";
+                }
+                code = code.RemoveLast(); code += ") VALUES (";
+                for (int i = 0; i < Props.Count; i++)
+                {
+                    if (i == 0 && Props[i].Name.ToLower().Contains("id")) { }
+                    else
+                        code += "@" + Props[i].Name + ",";
+                }
+                code = code.RemoveLast(); code += ")\";";
+                code += $"\r\n\t\t{UsingStyleConnection}";
+                code += "\r\n\t\t{";
+                code += "\r\n\t\t\tvar res = await cn.ExecuteAsync(sql, x);";
+                code += "\r\n\t\t\treturn res;";
+                code += "\r\n\t\t}";
+                code += "\r\n\t}";
+                code += "\r\n\tcatch (System.Exception) { throw; }";
+                code += "\r\n}";
+
+                return code;
+            }
+        }
         public static class Get_Async
         {
             public static string Build(string NameDataBase, string UsingStyleConnection, string NameTable, List<Entities.Props> Props)
@@ -142,6 +178,8 @@ namespace Project.Mapping
             public static string Build(string NameDataBase, string UsingStyleConnection, string NameTable, List<Entities.Props> Props)
             {
                 string code = "";
+                code += Create_Async.Build(NameDataBase, UsingStyleConnection, NameTable, Props);
+                code += "\r\n\r\n";
                 code += Get_Async.Build(NameDataBase, UsingStyleConnection, NameTable, Props);
                 code += "\r\n\r\n";
                 code += Get_List_Async.Build(NameDataBase, UsingStyleConnection, NameTable, Props);

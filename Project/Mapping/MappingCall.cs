@@ -10,28 +10,39 @@ namespace Project.Mapping
         public class LanguagesTypes
         {
             public string Lang { get; set; }
-            public string[] Statament { get; set; }
+            public List<string> Statament { get; set; }
+            public string ClassName { get; set; }
 
             public static List<LanguagesTypes> Langs()
             {
                 var lt = new List<LanguagesTypes>();
-                lt.Add(new LanguagesTypes { Lang = "MySql", Statament = new string[] { "create", "insert", "select", "update", "delete" } });
-                lt.Add(new LanguagesTypes { Lang = "CSharp", Statament = new string[] { "class" } });
-                lt.Add(new LanguagesTypes { Lang = "CSharp + Dapper + MySql", Statament = new string[] { "Get_Async", "Get_List_Async", "Update_Async", "Delete_Async", "Complete_Crud" } });
+                lt.Add(new LanguagesTypes { Lang = "MySql", ClassName = "Project.Mapping.MySqlMapper" });
+                lt.Add(new LanguagesTypes { Lang = "CSharp", ClassName = "Project.Mapping.CSharpMapper" });
+                lt.Add(new LanguagesTypes { Lang = "CSharp + Dapper + MySql", ClassName = "Project.Mapping.CSharpDapperMySqlMapper" });
+                foreach (var i in lt)
+                {
+                    var classes = Assembly.GetExecutingAssembly().GetTypes().Where(x => x.FullName.Contains(i.ClassName));
+                    foreach (var c in classes)
+                    {
+                        if (i.Statament == null)
+                            i.Statament = new List<string>();
+
+                        if (!c.Name.Contains("Mapper"))
+                            if (!c.Name.Contains(i.Lang))
+                                i.Statament.Add(c.Name.ToUpper());
+                    }
+                }
                 return lt;
             }
-
         }
 
         private static string MappingLangToClass(string LANG)
         {
-            switch (LANG.ToLower())
-            {
-                case "mysql": return "Project.Mapping.MySqlMapper";
-                case "csharp": return "Project.Mapping.CSharpMapper";
-                case "csharp + dapper + mysql": return "Project.Mapping.CSharpDapperMySqlMapper";
-            }
-            throw new ArgumentNullException("LANG is null");
+            var langs = LanguagesTypes.Langs();
+            var langFind = langs.Where(x => x.Lang.ToLower() == LANG.ToLower()).FirstOrDefault();
+            if (langFind != null)
+                return langFind.ClassName;
+            else throw new ArgumentNullException("Not found this lang");
         }
         public static string Mapper(string LANG, string CRUD, string NameDataBase, string UsingStyleConnection, string NameTable, List<Entities.Props> Props)
         {
